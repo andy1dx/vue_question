@@ -1,35 +1,29 @@
 <template>
-  <div class="question-box-container">
-    <b-jumbotron>
-      <template slot="lead">
-        {{ currentQuestion.question }}
-      </template>
+ <div class="QuestionBox container">
+   <b-jumbotron>
+    <template slot="lead">
+      {{ currentQuestion.question }}
+    </template>
 
-      <hr class="my-4" />
+    <hr class="my-4">
+    <b-list-group >
+      <b-list-group-item  
+      v-for="(answer, index) in shuffledAnswers" 
+      :key="index" 
+      @click="selectAnswer(index)"
+      :class="answerClass(index)"
+      > 
+      {{ answer }}</b-list-group-item>
+    </b-list-group>
 
-      <b-list-group>
-        <b-list-group-item
-          v-for="(answer, index) in shuffledAnswers"
-          :key="index"
-          @click.prevent="selectAnswer(index)"
-          :class="answerClass(index)"
-        >
-          {{ answer }}
-        </b-list-group-item>
-      </b-list-group>
-
-      <b-button
-        variant="primary"
-        @click="submitAnswer"
-        :disabled="selectedIndex === null || answered"
-      >
-        Submit
-      </b-button>
-      <b-button @click="next" variant="success">
-        Next
-      </b-button>
-    </b-jumbotron>
-  </div>
+    <b-button
+    variant="primary"
+    @click="submitAnswer"
+    :disabled="selectedIndex === null || answered"
+    >SUBMIT</b-button>
+    <b-button @click="next" variant="success" href="#">Next</b-button>
+  </b-jumbotron>
+ </div>   
 </template>
 
 <script>
@@ -62,28 +56,30 @@ export default {
     currentQuestion: {
       immediate: true,
       handler() {
+        console.log('runnnnnnn')
         this.selectedIndex = null
         this.answered = false
-        this.shuffleAnswers()
+        this.shuffleAnswer()
       }
     }
   },
   methods: {
     selectAnswer(index) {
-      this.selectedIndex = index
+      this.selectedIndex = index 
     },
-    submitAnswer() {
-      let isCorrect = false
-      if (this.selectedIndex === this.correctIndex) {
-        isCorrect = true
-      }
-      this.answered = true
-      this.increment(isCorrect)
-    },
-    shuffleAnswers() {
+    shuffleAnswer() {
       let answers = [...this.currentQuestion.incorrect_answers, this.currentQuestion.correct_answer]
       this.shuffledAnswers = _.shuffle(answers)
       this.correctIndex = this.shuffledAnswers.indexOf(this.currentQuestion.correct_answer)
+    },
+    submitAnswer() {
+      let isCorrect = false
+      if (this.selectedIndex === this.correctIndex){
+        isCorrect = true
+      }
+      this.answered = true
+      
+      this.increment(isCorrect)
     },
     answerClass(index) {
       let answerClass = ''
@@ -102,11 +98,10 @@ export default {
   }
 }
 </script>
-
 <style scoped>
 .list-group {
   margin-bottom: 15px;
-}
+} 
 .list-group-item:hover {
   background: #EEE;
   cursor: pointer;
@@ -115,12 +110,14 @@ export default {
   margin: 0 5px;
 }
 .selected {
-  background-color: lightblue;
+  background: lightblue;
 }
+
 .correct {
-  background-color: lightgreen;
+  background: lightgreen;
 }
+
 .incorrect {
-  background-color: red;
+  background: red;
 }
 </style>
